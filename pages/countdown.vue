@@ -31,7 +31,7 @@
           >
         </p>
         <h3 class="mt-5">{{ timeLeft }} seconds left.</h3>
-        <b-button @click="submitWord" class="mt-5">Submit Word</b-button>
+        <b-button @click="submitWord">Submit Word</b-button>
       </div>
     </b-container>
   </div>
@@ -39,6 +39,7 @@
 
 <script>
 import _ from "lodash";
+import words from "@/static/words.json";
 export default {
   data() {
     return {
@@ -48,7 +49,7 @@ export default {
       consonants: "bbbcccdddfffggghhjkllmmnnpppqrrrssstttvwxyz",
       timeLeft: 30,
       timerInterval: null,
-      dictionary: ["dogs"],
+      dictionary: words,
       gameStarted: false,
       yourScore: 0,
       yourRound: 1,
@@ -71,7 +72,7 @@ export default {
       this.currentLetters.push(this.yourWord.splice(index, 1)[0]);
     },
     submitWord() {
-      if (this.dictionary.includes(this.yourWord.join())) {
+      if (this.dictionary.includes(this.yourWord.join(""))) {
         const score = this.yourWord.length;
         this.yourScore += score;
         this.message = `Well done, you scored ${score} points`;
