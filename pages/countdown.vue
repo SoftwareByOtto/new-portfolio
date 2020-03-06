@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container>
-      <h1>
+      <h1 class="text-center">
         COUNT
         <img
           src="https://vignette.wikia.nocookie.net/logopedia/images/b/ba/Countdown_2012.png/revision/latest?cb=20120109211433"
@@ -12,12 +12,24 @@
       </h1>
       <h2>Round {{ yourRound }}, Your score is {{ yourScore }}</h2>
       <p v-if="message">{{ message }}</p>
+      <youtube
+        @ready="ready"
+        video-id="M2dhD9zR6hk"
+        style="float: right;"
+      ></youtube>
       <div v-if="!gameStarted">
         <b-button @click="pickVowel">Pick a vowel</b-button>
         <b-button @click="pickConsonant">Pick a consontant</b-button>
       </div>
+      <img
+        v-if="!currentLetters.length && !gameStarted"
+        src="https://www.standard.co.uk/s3fs-public/thumbnails/image/2019/11/21/14/rachelrileyextra211119a-1.jpg"
+        alt=""
+        width="400px"
+        class="mt-3"
+      />
       <h3 v-if="currentLetters.length">Your letters are:</h3>
-      <p class="mt-3">
+      <p>
         <b-button
           @click="selectLetter(index)"
           class="letter"
@@ -26,9 +38,9 @@
           >{{ letter }}</b-button
         >
       </p>
-      <div class="mt-3" v-if="gameStarted">
+      <div v-if="gameStarted">
         <h3 v-if="yourWord.length">Your word is:</h3>
-        <p class="mt-3">
+        <p>
           <b-button
             @click="deselectLetter(index)"
             class="letter"
@@ -37,8 +49,7 @@
             >{{ letter }}</b-button
           >
         </p>
-        <hr />
-        <h3 class="mt-3">{{ timeLeft }} seconds left.</h3>
+        <h3>{{ timeLeft }} seconds left.</h3>
         <b-button @click="submitWord">Submit Word</b-button>
       </div>
     </b-container>
@@ -68,6 +79,11 @@ export default {
     };
   },
   methods: {
+    ready(event) {
+      this.player = event.target;
+      this.player.seekTo(2);
+      this.player.pauseVideo();
+    },
     pickVowel() {
       this.currentLetters.push(_.sample(this.vowels.split("")));
     },
@@ -108,7 +124,6 @@ export default {
       }, 1000);
     }
   },
-  computed: {},
   watch: {
     currentLetters() {
       if (this.currentLetters.length === 10) {
@@ -118,11 +133,14 @@ export default {
     gameStarted() {
       if (this.gameStarted) {
         this.startTimer();
+        this.player.playVideo();
         this.answers = scrabble
           .find(this.currentLetters.join(""))
           .sort((a, b) => b.length - a.length);
       } else {
         clearInterval(this.timerInterval);
+        this.player.seekTo(2);
+        this.player.pauseVideo();
       }
     }
   }
@@ -142,5 +160,7 @@ export default {
   text-decoration-style: none;
   display: inline-block;
   width: 75px;
+  border: lightblue 2px solid;
+  font-family: Avenir;
 }
 </style>
