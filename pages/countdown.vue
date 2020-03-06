@@ -2,9 +2,9 @@
   <div>
     <b-container>
       <h1>Countdown!</h1>
-      <h2>Round {{yourRound}}</h2>
-      <h2>Your score is {{yourScore}}</h2>
-      <p v-if="message">{{message}}</p>
+      <h2>Round {{ yourRound }}</h2>
+      <h2>Your score is {{ yourScore }}</h2>
+      <p v-if="message">{{ message }}</p>
       <div v-if="!gameStarted">
         <b-button @click="pickVowel">Pick a vowel</b-button>
         <b-button @click="pickConsonant">Pick a consontant</b-button>
@@ -16,7 +16,8 @@
           class="letter"
           v-for="(letter, index) in currentLetters"
           :key="`a${letter}${index}`"
-        >{{letter}}</span>
+          >{{ letter }}</span
+        >
       </p>
       <div class="mt-5" v-if="gameStarted">
         <h3 v-if="yourWord.length">Your word is:</h3>
@@ -26,9 +27,10 @@
             class="letter"
             v-for="(letter, index) in yourWord"
             :key="`b${letter}${index}`"
-          >{{letter}}</span>
+            >{{ letter }}</span
+          >
         </p>
-        <h3 class="mt-5">{{timeLeft}} seconds left.</h3>
+        <h3 class="mt-5">{{ timeLeft }} seconds left.</h3>
         <b-button @click="submitWord" class="mt-5">Submit Word</b-button>
       </div>
     </b-container>
@@ -80,11 +82,16 @@ export default {
       this.yourWord = [];
       this.gameStarted = false;
       this.yourRound++;
-      clearInterval(this.timerInterval);
     },
     startTimer() {
       this.timeLeft = 30;
-      this.timerInterval = setInterval(() => this.timeLeft--, 1000);
+      this.timerInterval = setInterval(() => {
+        console.log("time ticking");
+        this.timeLeft--;
+        if (this.timeLeft < 0) {
+          this.submitWord();
+        }
+      }, 1000);
     }
   },
   computed: {},
@@ -92,12 +99,13 @@ export default {
     currentLetters() {
       if (this.currentLetters.length === 10) {
         this.gameStarted = true;
-        this.startTimer();
       }
     },
-    timeLeft() {
-      if (this.timeLeft >= 0) {
-        this.submitWord();
+    gameStarted() {
+      if (this.gameStarted) {
+        this.startTimer();
+      } else {
+        clearInterval(this.timerInterval);
       }
     }
   }
