@@ -1,30 +1,51 @@
 <template>
   <div>
-    <b-container>
-      <h1 class="text-center">
-        COUNT
-        <img
-          src="https://vignette.wikia.nocookie.net/logopedia/images/b/ba/Countdown_2012.png/revision/latest?cb=20120109211433"
-          alt=""
-          width="100px"
-        />
-        DOWN
-      </h1>
-      <h2>Round {{ yourRound }}, Your score is {{ yourScore }}</h2>
-      <p v-if="message">{{ message }}</p>
-      <youtube
-        @ready="ready"
-        video-id="M2dhD9zR6hk"
-        style="float: right;"
-      ></youtube>
-      <div v-if="!gameStarted">
-        <b-button @click="pickVowel">Pick a vowel</b-button>
-        <b-button @click="pickConsonant">Pick a consontant</b-button>
-      </div>
+    <b-container class="mt-3">
+      <b-row class="text-center">
+        <b-col md="4">
+          <h1>COUNT</h1>
+          <p v-if="message">{{ message }}</p>
+          <div v-if="!gameStarted">
+            <b-button @click="pickVowel">Pick a vowel</b-button>
+            <b-button @click="pickConsonant">Pick a consontant</b-button>
+          </div>
+        </b-col>
+        <b-col md="4"
+          ><youtube
+            @ready="ready"
+            video-id="M2dhD9zR6hk"
+            :player-vars="{
+              showinfo: 0,
+              controls: 0,
+              start: 2,
+              rel: 0,
+              modestbranding: 1
+            }"
+            player-width="300"
+            player-height="200"
+          ></youtube
+        ></b-col>
+        <b-col md="4">
+          <h1>DOWN</h1>
+          <b-row>
+            <b-col>
+              <h3>Round</h3>
+              <h1>{{ yourRound }}</h1>
+            </b-col>
+            <b-col>
+              <h3>Score</h3>
+              <h1>{{ yourScore }}</h1>
+            </b-col>
+            <b-col>
+              <h3>Seconds</h3>
+              <h1>{{ timeLeft }}</h1>
+            </b-col>
+          </b-row>
+        </b-col>
+      </b-row>
       <img
         v-if="!currentLetters.length && !gameStarted"
         src="https://www.standard.co.uk/s3fs-public/thumbnails/image/2019/11/21/14/rachelrileyextra211119a-1.jpg"
-        alt=""
         width="400px"
         class="mt-3"
       />
@@ -49,7 +70,6 @@
             >{{ letter }}</b-button
           >
         </p>
-        <h3>{{ timeLeft }} seconds left.</h3>
         <b-button @click="submitWord">Submit Word</b-button>
       </div>
     </b-container>
@@ -103,10 +123,11 @@ export default {
         this.yourScore += score;
         this.message = `Well done, you scored ${score} points!`;
       } else {
-        this.message = "Incorrect word. You scored 0 points.";
+        this.message = `I'm afraid ${this.yourWord.join("") ||
+          "that"} isn't a word, so you get 0 points.`;
       }
       this.message = this.message.concat(
-        ` You could have said ${this.answers[0]}, ${this.answers[1]} or ${this.answers[2]}.`
+        ` However, you could have said ${this.answers[0]}, ${this.answers[1]} or ${this.answers[2]}.`
       );
       this.currentLetters = [];
       this.yourWord = [];
@@ -118,7 +139,7 @@ export default {
       this.timerInterval = setInterval(() => {
         console.log("time ticking");
         this.timeLeft--;
-        if (this.timeLeft < 0) {
+        if (this.timeLeft <= 0) {
           this.submitWord();
         }
       }, 1000);
