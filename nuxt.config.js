@@ -64,6 +64,6 @@ export default {
     }
   },
   router: {
-    base: '/app/'
+    base: '/new-portfolio/'
   }
 }
